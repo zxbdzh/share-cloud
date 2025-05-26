@@ -1,25 +1,25 @@
 # Tomcat
 server:
-  port: 9200
+  port: 9205
 
 # Spring
 spring:
   application:
     # 应用名称
-    name: share-auth
+    name: share-device
   profiles:
     # 环境配置
     active: dev
+  main:
+    allow-bean-definition-overriding: true #当遇到同样名字的时候，是否允许覆盖注册
   cloud:
     nacos:
       discovery:
         # 服务注册地址
         server-addr: 192.168.239.131:8848
-        namespace: e040ef0e-9b53-4432-bab6-b2eb05356d62
       config:
         # 配置中心地址
         server-addr: 192.168.239.131:8848
-        namespace: e040ef0e-9b53-4432-bab6-b2eb05356d62
         # 配置文件格式
         file-extension: yml
         # 共享配置
