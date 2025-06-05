@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.share.device.mapper.CabinetSlotMapper">
+    <resultMap id="CabinetSlotResult" type="com.share.device.domain.CabinetSlot" autoMapping="true"/>
+    <!--insert条件插入-->
+    <insert id="insert">
+        INSERT INTO cabinet_slot
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="cabinetId != null">cabinet_id,</if>
+            <if test="slotNo != null">slot_no,</if>
+            <if test="powerBankId != null">power_bank_id,</if>
+            <if test="status != null">status,</if>
+            <if test="delFlag != null">del_flag,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+        </trim>
+        <trim prefix="VALUES (" suffix=")" suffixOverrides=",">
+            <if test="cabinetId != null">#{cabinetId},</if>
+            <if test="slotNo != null">#{slotNo},</if>
+            <if test="powerBankId != null">#{powerBankId},</if>
+            <if test="status != null">#{status},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+        </trim>
+    </insert>
+
+    <delete id="delete">
+        <trim prefix="WHERE" prefixOverrides="AND |OR">
+            <if test="cabinetId != null">cabinet_id = #{cabinetId}</if>
+            <if test="slotNo != null">AND slot_no = #{slotNo}</if>
+            <if test="powerBankId != null">AND power_bank_id = #{powerBankId}</if>
+        </trim>
+    </delete>
+
+</mapper>
