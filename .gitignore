@@ -45,4 +45,4 @@ nbdist/
 !*/build/*.html
 !*/build/*.xml
 
-bootstrap.yml
+**/bootstrap.yml
