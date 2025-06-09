@@ -45,4 +45,5 @@ nbdist/
 !*/build/*.html
 !*/build/*.xml
 
+# 忽略所有bootstrap.yml文件
 **/bootstrap.yml

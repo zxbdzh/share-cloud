@@ -17,4 +17,12 @@ public interface IRegionService extends IService<Region> {
      * @return
      */
     List<Region> treeSelect(String parentCode);
+
+    /**
+     * 根据code获取名称
+     * @param code
+     * @return
+     */
+    String getNameByCode(String code);
+
 }
