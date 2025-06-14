@@ -30,4 +30,8 @@ public class CabinetSlot extends BaseEntity {
     @Schema(description = "状态")
     private String status;
 
+    @Schema(description = "充电宝")
+    @TableField(exist = false)
+    private PowerBank powerBank;
+
 }

@@ -4,18 +4,20 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.share.device.domain.Cabinet;
 import com.share.device.domain.Station;
+import com.share.device.domain.StationLocation;
 import com.share.device.mapper.StationMapper;
+import com.share.device.repository.StationLocationRepository;
 import com.share.device.service.ICabinetService;
 import com.share.device.service.IRegionService;
 import com.share.device.service.IStationService;
 import jakarta.annotation.Resource;
+import org.bson.types.ObjectId;
+import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -29,6 +31,9 @@ public class StationServiceImpl extends ServiceImpl<StationMapper, Station> impl
 
     @Resource
     private IRegionService regionService;
+
+    @Resource
+    private StationLocationRepository stationLocationRepository;
 
     /**
      * 查询站点列表
@@ -76,11 +81,20 @@ public class StationServiceImpl extends ServiceImpl<StationMapper, Station> impl
         station.setFullAddress(provinceName + cityName + districtName + station.getAddress());
         this.save(station);
 
+        // 同步站点位置信息到MongoDB
+        StationLocation stationLocation = new StationLocation();
+        stationLocation.setId(ObjectId.get().toString()); // 设置一个随机唯一id
+        stationLocation.setStationId(station.getId());
+        stationLocation.setLocation(new GeoJsonPoint(station.getLongitude().doubleValue(), station.getLatitude().doubleValue()));
+        stationLocation.setCreateTime(new Date());
+        stationLocationRepository.save(stationLocation);
+
         return 1;
     }
 
     /**
      * 修改站点
+     *
      * @param station 站点
      * @return
      */
@@ -92,6 +106,37 @@ public class StationServiceImpl extends ServiceImpl<StationMapper, Station> impl
         station.setFullAddress(provinceName + cityName + districtName + station.getAddress());
         this.updateById(station);
 
+        StationLocation stationLocation = stationLocationRepository.getByStationId(station.getId());
+        stationLocation.setLocation(new GeoJsonPoint(station.getLongitude().doubleValue(), station.getLatitude().doubleValue()));
+        stationLocationRepository.save(stationLocation);
+
         return 1;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public int setData(Station station) {
+        this.updateById(station);
+
+        // 更正柜机使用状态
+        Cabinet cabinet = cabinetService.getById(station.getCabinetId());
+        cabinet.setStatus("1");
+        cabinetService.updateById(cabinet);
+
+        return 1;
+    }
+
+    /**
+     * 批量删除站点
+     *
+     * @param list
+     * @return
+     */
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public boolean removeBatchByIds(Collection<?> list) {
+        for (Object id : list) {
+            stationLocationRepository.deleteByStationId(Long.parseLong(id.toString()));
+        }
+        return super.removeByIds(list);
     }
 }

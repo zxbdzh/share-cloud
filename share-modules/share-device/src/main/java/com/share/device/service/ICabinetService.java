@@ -5,6 +5,7 @@ import com.share.device.domain.Cabinet;
 import com.share.device.domain.CabinetType;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 充电柜机服务接口
@@ -46,5 +47,12 @@ public interface ICabinetService extends IService<Cabinet> {
      * @return 充电柜机信息集合
      */
     List<Cabinet> searchNoUseList(String keyword);
+
+    /**
+     * 获取充电柜机全部详细信息
+     * @param id
+     * @return
+     */
+    Map<String, Object> getAllInfo(Long id);
 
 }
